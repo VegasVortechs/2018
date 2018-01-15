@@ -2,6 +2,12 @@
 // Version Test0.1
 package org.usfirst.frc.team6519.robot;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.IMotorController;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -21,9 +27,11 @@ public class Robot extends TimedRobot {
 	private String m_autoSelected;
 	private SendableChooser<String> m_chooser = new SendableChooser<>();
 	
-	Spark testMotor0 = new Spark(0);
-	Spark testMotor1 = new Spark(1);
+	Spark sparkMotor0 = new Spark(0);
+	Spark sparkMotor1 = new Spark(1);
 	Joystick testJoystick = new Joystick(0);
+	
+	WPI_TalonSRX talonMotor3 = new WPI_TalonSRX(3);
 
 	/**
 	 * This function is run when the robot is first started up and should be
@@ -34,6 +42,8 @@ public class Robot extends TimedRobot {
 		m_chooser.addDefault("Default Auto", kDefaultAuto);
 		m_chooser.addObject("My Auto", kCustomAuto);
 		SmartDashboard.putData("Auto choices", m_chooser);
+		
+		talonMotor3.setNeutralMode(NeutralMode.Brake);
 	}
 
 	/**
@@ -84,16 +94,19 @@ public class Robot extends TimedRobot {
 	@Override
 	public void testPeriodic() {
 		if (testJoystick.getRawButton(3)) {
-			testMotor1.set(1.0);
-			testMotor0.set(1.0);
+			sparkMotor1.set(1.0);
+			sparkMotor0.set(1.0);
+			talonMotor3.set(ControlMode.PercentOutput, 1.0);
 		}
 		else if (testJoystick.getRawButton(2)) {
-			testMotor0.set(-1.0);
-			testMotor1.set(-1.0);
+			sparkMotor0.set(-1.0);
+			sparkMotor1.set(-1.0);
+			talonMotor3.set(ControlMode.PercentOutput, -1.0);
 		}
 		else {
-			testMotor0.set(0);
-			testMotor1.set(0);
+			sparkMotor0.set(0);
+			sparkMotor1.set(0);
+			talonMotor3.set(ControlMode.PercentOutput, 0);
 		}
 	}
 }
