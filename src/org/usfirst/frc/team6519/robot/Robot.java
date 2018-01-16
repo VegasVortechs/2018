@@ -10,6 +10,8 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Spark;
+import edu.wpi.first.wpilibj.Talon;
+import edu.wpi.first.wpilibj.PWMTalonSRX;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -30,6 +32,7 @@ public class Robot extends TimedRobot {
 	Spark sparkMotor0 = new Spark(0);
 	Spark sparkMotor1 = new Spark(1);
 	Joystick testJoystick = new Joystick(0);
+	PWMTalonSRX testTalon = new PWMTalonSRX(2);
 	
 	WPI_TalonSRX talonMotor3 = new WPI_TalonSRX(3);
 
@@ -96,16 +99,19 @@ public class Robot extends TimedRobot {
 		if (testJoystick.getRawButton(3)) {
 			sparkMotor1.set(1.0);
 			sparkMotor0.set(1.0);
-			talonMotor3.set(ControlMode.PercentOutput, 1.0);
+			testTalon.set(1.0);
+			talonMotor3.set(ControlMode.PercentOutput, 100.0);
 		}
 		else if (testJoystick.getRawButton(2)) {
 			sparkMotor0.set(-1.0);
 			sparkMotor1.set(-1.0);
-			talonMotor3.set(ControlMode.PercentOutput, -1.0);
+			testTalon.set(-1.0);
+			talonMotor3.set(ControlMode.PercentOutput, -100.0);
 		}
 		else {
-			sparkMotor0.set(0);
+//			sparkMotor0.set(0);
 			sparkMotor1.set(0);
+			testTalon.set(0);
 			talonMotor3.set(ControlMode.PercentOutput, 0);
 		}
 	}
