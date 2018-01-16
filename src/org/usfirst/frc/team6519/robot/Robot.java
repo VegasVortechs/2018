@@ -1,5 +1,5 @@
-// gg wp no re ez pz lemon squez
-// Version Test0.1
+// Version Test 0.3
+
 package org.usfirst.frc.team6519.robot;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -34,7 +34,7 @@ public class Robot extends TimedRobot {
 	Joystick testJoystick = new Joystick(0);
 	PWMTalonSRX testTalon = new PWMTalonSRX(2);
 	
-	WPI_TalonSRX talonMotor3 = new WPI_TalonSRX(3);
+	WPI_TalonSRX talonMotor3 = new WPI_TalonSRX(1);
 
 	/**
 	 * This function is run when the robot is first started up and should be
@@ -100,13 +100,13 @@ public class Robot extends TimedRobot {
 			sparkMotor1.set(1.0);
 			sparkMotor0.set(1.0);
 			testTalon.set(1.0);
-			talonMotor3.set(ControlMode.PercentOutput, 100.0);
+			talonMotor3.set(ControlMode.PercentOutput, 1.0);
 		}
 		else if (testJoystick.getRawButton(2)) {
 			sparkMotor0.set(-1.0);
 			sparkMotor1.set(-1.0);
 			testTalon.set(-1.0);
-			talonMotor3.set(ControlMode.PercentOutput, -100.0);
+			talonMotor3.set(ControlMode.PercentOutput, -1.0);
 		}
 		else {
 //			sparkMotor0.set(0);
