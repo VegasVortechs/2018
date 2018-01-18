@@ -1,4 +1,4 @@
-// Version Test 0.3
+// Version Test 0.3b
 
 package org.usfirst.frc.team6519.robot;
 
@@ -34,7 +34,12 @@ public class Robot extends TimedRobot {
 	Joystick testJoystick = new Joystick(0);
 	PWMTalonSRX testTalon = new PWMTalonSRX(2);
 	
-	WPI_TalonSRX talonMotor3 = new WPI_TalonSRX(1);
+	WPI_TalonSRX talonMotor10 = new WPI_TalonSRX(10);
+	WPI_TalonSRX talonMotor11 = new WPI_TalonSRX(11);
+	WPI_TalonSRX talonMotor12 = new WPI_TalonSRX(12);
+	WPI_TalonSRX talonMotor13 = new WPI_TalonSRX(13);
+	WPI_TalonSRX talonMotor14 = new WPI_TalonSRX(14);
+	WPI_TalonSRX talonMotor15 = new WPI_TalonSRX(15);
 
 	/**
 	 * This function is run when the robot is first started up and should be
@@ -46,7 +51,12 @@ public class Robot extends TimedRobot {
 		m_chooser.addObject("My Auto", kCustomAuto);
 		SmartDashboard.putData("Auto choices", m_chooser);
 		
-		talonMotor3.setNeutralMode(NeutralMode.Brake);
+		talonMotor10.setNeutralMode(NeutralMode.Brake);
+		talonMotor11.setNeutralMode(NeutralMode.Brake);
+		talonMotor12.setNeutralMode(NeutralMode.Brake);
+		talonMotor13.setNeutralMode(NeutralMode.Brake);
+		talonMotor14.setNeutralMode(NeutralMode.Brake);
+		talonMotor15.setNeutralMode(NeutralMode.Brake);
 	}
 
 	/**
@@ -100,19 +110,37 @@ public class Robot extends TimedRobot {
 			sparkMotor1.set(1.0);
 			sparkMotor0.set(1.0);
 			testTalon.set(1.0);
-			talonMotor3.set(ControlMode.PercentOutput, 1.0);
+			
+			talonMotor10.set(ControlMode.PercentOutput, 1.0);
+			talonMotor11.set(ControlMode.PercentOutput, 1.0);
+			talonMotor12.set(ControlMode.PercentOutput, 1.0);
+			talonMotor13.set(ControlMode.PercentOutput, 1.0);
+			talonMotor14.set(ControlMode.PercentOutput, 1.0);
+			talonMotor15.set(ControlMode.PercentOutput, 1.0);
 		}
 		else if (testJoystick.getRawButton(2)) {
 			sparkMotor0.set(-1.0);
 			sparkMotor1.set(-1.0);
 			testTalon.set(-1.0);
-			talonMotor3.set(ControlMode.PercentOutput, -1.0);
+			
+			talonMotor10.set(ControlMode.PercentOutput, -1.0);
+			talonMotor11.set(ControlMode.PercentOutput, -1.0);
+			talonMotor12.set(ControlMode.PercentOutput, -1.0);
+			talonMotor13.set(ControlMode.PercentOutput, -1.0);
+			talonMotor14.set(ControlMode.PercentOutput, -1.0);
+			talonMotor15.set(ControlMode.PercentOutput, -1.0);
 		}
 		else {
 //			sparkMotor0.set(0);
 			sparkMotor1.set(0);
 			testTalon.set(0);
-			talonMotor3.set(ControlMode.PercentOutput, 0);
+			
+			talonMotor10.set(ControlMode.PercentOutput, 0);
+			talonMotor11.set(ControlMode.PercentOutput, 0);
+			talonMotor12.set(ControlMode.PercentOutput, 0);
+			talonMotor13.set(ControlMode.PercentOutput, 0);
+			talonMotor14.set(ControlMode.PercentOutput, 0);
+			talonMotor15.set(ControlMode.PercentOutput, 0);
 		}
 	}
 }
