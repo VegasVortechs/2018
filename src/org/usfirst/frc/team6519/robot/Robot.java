@@ -1,17 +1,17 @@
-// Version Test 0.3b
+// Version Test 0.4
 
 package org.usfirst.frc.team6519.robot;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.IMotorController;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
+import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.Spark;
-import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.PWMTalonSRX;
+import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -40,6 +40,9 @@ public class Robot extends TimedRobot {
 	WPI_TalonSRX talonMotor13 = new WPI_TalonSRX(13);
 	WPI_TalonSRX talonMotor14 = new WPI_TalonSRX(14);
 	WPI_TalonSRX talonMotor15 = new WPI_TalonSRX(15);
+	
+	Compressor compressor = new Compressor();
+	DoubleSolenoid testSel = new DoubleSolenoid(1, 0);
 
 	/**
 	 * This function is run when the robot is first started up and should be
@@ -141,6 +144,13 @@ public class Robot extends TimedRobot {
 			talonMotor13.set(ControlMode.PercentOutput, 0);
 			talonMotor14.set(ControlMode.PercentOutput, 0);
 			talonMotor15.set(ControlMode.PercentOutput, 0);
+			
+			testSel.set(Value.kForward);
+		}
+		
+		if (testJoystick.getRawButton(7)) {
+			testSel.set(Value.kForward);
+			System.out.println(compressor.getCompressorCurrent());
 		}
 	}
 }
