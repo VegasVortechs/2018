@@ -1,4 +1,4 @@
-// Version Test 0.5
+// Version Trilobite 0.6
 
 package org.usfirst.frc.team6519.robot;
 
@@ -7,9 +7,10 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -37,11 +38,12 @@ public class Robot extends TimedRobot {
 	
 	Joystick leftJoystick = new Joystick(0);
 	Joystick rightJoystick = new Joystick(1);
+	XboxController xboxController = new XboxController(2);
 	
 	DifferentialDrive robotDrive = new DifferentialDrive(leftMotor, rightMotor);
 
 	
-	Compressor compressor = new Compressor();
+	Compressor compressor = new Compressor(0);
 	DoubleSolenoid testSel = new DoubleSolenoid(1, 0);
 
 	/**
@@ -103,7 +105,8 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
-		robotDrive.tankDrive(-leftJoystick.getY(), -rightJoystick.getY(), true);
+		robotDrive.tankDrive(-leftJoystick.getY(), rightJoystick.getY(), true);
+		robotDrive.tankDrive(xboxController.getY(Hand.kLeft), xboxController.getY(Hand.kRight));
 	}
 
 	/**
