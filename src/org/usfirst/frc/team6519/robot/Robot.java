@@ -1,4 +1,4 @@
-// Version Trilobite 0.6
+// Version Trilobite 0.6b
 
 package org.usfirst.frc.team6519.robot;
 
@@ -8,6 +8,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
@@ -106,7 +107,14 @@ public class Robot extends TimedRobot {
 	@Override
 	public void teleopPeriodic() {
 		robotDrive.tankDrive(-leftJoystick.getY(), rightJoystick.getY(), true);
-		robotDrive.tankDrive(xboxController.getY(Hand.kLeft), xboxController.getY(Hand.kRight));
+		robotDrive.tankDrive(-xboxController.getY(Hand.kLeft), -xboxController.getY(Hand.kRight));
+		
+		if (xboxController.getY(Hand.kLeft) != 0 ) {
+			xboxController.setRumble(RumbleType.kLeftRumble, 1);
+		}
+		if (xboxController.getY(Hand.kRight) != 0) {
+			xboxController.setRumble(RumbleType.kRightRumble, 1);
+		}
 	}
 
 	/**
