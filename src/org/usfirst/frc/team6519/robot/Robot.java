@@ -1,4 +1,4 @@
-// Version Trilobite 0.6b
+// Version Trilobite 0.6c
 
 package org.usfirst.frc.team6519.robot;
 
@@ -106,13 +106,13 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
-		robotDrive.tankDrive(-leftJoystick.getY(), rightJoystick.getY(), true);
-		robotDrive.tankDrive(-xboxController.getY(Hand.kLeft), -xboxController.getY(Hand.kRight));
+		robotDrive.tankDrive(leftJoystick.getY(), rightJoystick.getY(), true);
+		robotDrive.tankDrive(xboxController.getY(Hand.kLeft), xboxController.getY(Hand.kRight));
 		
-		if (xboxController.getY(Hand.kLeft) != 0 ) {
+		if (xboxController.getY(Hand.kLeft) > 0.3 ) {
 			xboxController.setRumble(RumbleType.kLeftRumble, 1);
 		}
-		if (xboxController.getY(Hand.kRight) != 0) {
+		if (xboxController.getY(Hand.kRight) > 0.3) {
 			xboxController.setRumble(RumbleType.kRightRumble, 1);
 		}
 	}
