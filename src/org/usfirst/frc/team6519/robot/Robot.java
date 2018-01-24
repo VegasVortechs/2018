@@ -1,4 +1,4 @@
-// Version Trilobite 0.6c
+// Version Mammoth 0.7
 
 package org.usfirst.frc.team6519.robot;
 
@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -44,8 +45,8 @@ public class Robot extends TimedRobot {
 	DifferentialDrive robotDrive = new DifferentialDrive(leftMotor, rightMotor);
 
 	
-	Compressor compressor = new Compressor(0);
-	DoubleSolenoid testSel = new DoubleSolenoid(1, 0);
+	Compressor compressor = new Compressor(1);
+	DoubleSolenoid testSel = new DoubleSolenoid(1, 0, 1);
 
 	/**
 	 * This function is run when the robot is first started up and should be
@@ -64,6 +65,8 @@ public class Robot extends TimedRobot {
 		
 		leftSlave.follow(leftMotor);
 		rightSlave.follow(rightMotor);
+		
+		compressor.start();
 	}
 
 	/**
@@ -107,13 +110,25 @@ public class Robot extends TimedRobot {
 	@Override
 	public void teleopPeriodic() {
 		robotDrive.tankDrive(leftJoystick.getY(), rightJoystick.getY(), true);
-		robotDrive.tankDrive(xboxController.getY(Hand.kLeft), xboxController.getY(Hand.kRight));
+		robotDrive.tankDrive(xboxController.getY(Hand.kLeft), xboxController.getY(Hand.kRight), true);
 		
-		if (xboxController.getY(Hand.kLeft) > 0.3 ) {
+		// Xbox Rumble
+		if (xboxController.getY(Hand.kLeft) > 0.9 ) {
 			xboxController.setRumble(RumbleType.kLeftRumble, 1);
 		}
-		if (xboxController.getY(Hand.kRight) > 0.3) {
+		if (xboxController.getY(Hand.kRight) > 0.9) {
 			xboxController.setRumble(RumbleType.kRightRumble, 1);
+		}
+		
+		// Gear shift penumatics
+		if (rightJoystick.getRawButton(6) || xboxController.getYButton()) {
+			testSel.set(Value.kForward);
+		}
+		else if (rightJoystick.getRawButton(7) || xboxController.getAButton()) {
+			testSel.set(Value.kReverse);
+		}
+		else {
+			testSel.set(Value.kOff);
 		}
 	}
 
