@@ -1,4 +1,4 @@
-// Version Mammoth 0.7
+// Version Mammoth 0.7b
 
 package org.usfirst.frc.team6519.robot;
 
@@ -121,14 +121,16 @@ public class Robot extends TimedRobot {
 		}
 		
 		// Gear shift penumatics
-		if (rightJoystick.getRawButton(6) || xboxController.getYButton()) {
-			testSel.set(Value.kForward);
-		}
-		else if (rightJoystick.getRawButton(7) || xboxController.getAButton()) {
-			testSel.set(Value.kReverse);
-		}
-		else {
-			testSel.set(Value.kOff);
+		if (Math.abs(leftMotor.get()) > 0.1 || Math.abs(rightMotor.get()) > 0.1) {
+			if (rightJoystick.getRawButton(6) || xboxController.getYButton()) {
+				testSel.set(Value.kForward);
+			}
+			else if (rightJoystick.getRawButton(7) || xboxController.getAButton()) {
+				testSel.set(Value.kReverse);
+			}
+			else {
+				testSel.set(Value.kOff);
+			}
 		}
 	}
 
