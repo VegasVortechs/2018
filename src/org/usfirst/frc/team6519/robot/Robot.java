@@ -1,4 +1,4 @@
-// Version Mammoth 0.7b
+// Version Mammoth 0.7c
 
 package org.usfirst.frc.team6519.robot;
 
@@ -7,12 +7,11 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
-import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -63,8 +62,15 @@ public class Robot extends TimedRobot {
 		leftSlave.setNeutralMode(NeutralMode.Brake);
 		rightSlave.setNeutralMode(NeutralMode.Brake);
 		
-		leftSlave.follow(leftMotor);
+		
+		leftSlave.follow(leftMotor);	
 		rightSlave.follow(rightMotor);
+
+		
+		leftMotor.enableVoltageCompensation(true);
+		leftSlave.enableVoltageCompensation(true);
+		rightMotor.enableVoltageCompensation(true);
+		rightSlave.enableVoltageCompensation(true);
 		
 		compressor.start();
 	}
@@ -109,16 +115,25 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
-		robotDrive.tankDrive(leftJoystick.getY(), rightJoystick.getY(), true);
-		robotDrive.tankDrive(xboxController.getY(Hand.kLeft), xboxController.getY(Hand.kRight), true);
 		
-		// Xbox Rumble
-		if (xboxController.getY(Hand.kLeft) > 0.9 ) {
-			xboxController.setRumble(RumbleType.kLeftRumble, 1);
-		}
-		if (xboxController.getY(Hand.kRight) > 0.9) {
-			xboxController.setRumble(RumbleType.kRightRumble, 1);
-		}
+		double leftInput = leftJoystick.getY() + xboxController.getY(Hand.kLeft);
+		double rightInput = rightJoystick.getY() + xboxController.getY(Hand.kRight);
+		
+		robotDrive.tankDrive(leftInput, rightInput, true);
+		
+//		// Xbox Rumble
+//		if (xboxController.getY(Hand.kLeft) > 0.9 ) {
+//			xboxController.setRumble(RumbleType.kLeftRumble, 1);
+//		}
+//		else {
+//			xboxController.setRumble(RumbleType.kLeftRumble, 0);
+//		}
+//		if (xboxController.getY(Hand.kRight) > 0.9) {
+//			xboxController.setRumble(RumbleType.kRightRumble, 1);
+//		}
+//		else {
+//			xboxController.setRumble(RumbleType.kRightRumble, 0);
+//		}
 		
 		// Gear shift penumatics
 		if (Math.abs(leftMotor.get()) > 0.1 || Math.abs(rightMotor.get()) > 0.1) {
