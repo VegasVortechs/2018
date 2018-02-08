@@ -1,4 +1,4 @@
-// Version sloth 0.8
+// Version Sloth 0.8b
 
 package org.usfirst.frc.team6519.robot;
 
@@ -45,10 +45,10 @@ public class Robot extends TimedRobot {
 
 	
 	Compressor compressor = new Compressor(1);
-	DoubleSolenoid testSel = new DoubleSolenoid(1, 0, 1);
-	DoubleSolenoid Arm = new DoubleSolenoid(1, 2, 3);
-	DoubleSolenoid Extension = new DoubleSolenoid(1, 4, 5);
-	DoubleSolenoid Claw = new DoubleSolenoid(1, 6, 7);
+	DoubleSolenoid geartSel = new DoubleSolenoid(1, 0, 1);
+	DoubleSolenoid armSel = new DoubleSolenoid(1, 2, 3);
+	DoubleSolenoid extensionSel = new DoubleSolenoid(1, 4, 5);
+	DoubleSolenoid clawSel = new DoubleSolenoid(1, 6, 7);
 	/**
 	 * This function is run when the robot is first started up and should be
 	 * used for any initialization code.
@@ -140,33 +140,38 @@ public class Robot extends TimedRobot {
 		// Gear shift penumatics
 		if (Math.abs(leftMotor.get()) > 0.1 || Math.abs(rightMotor.get()) > 0.1) {
 			if (rightJoystick.getRawButton(3) || xboxController.getYButton()) {
-				testSel.set(Value.kForward);
+				geartSel.set(Value.kForward);
 			}
 			else if (rightJoystick.getRawButton(2) || xboxController.getAButton()) {
-				testSel.set(Value.kReverse);
+				geartSel.set(Value.kReverse);
 			}
 			else {
-				testSel.set(Value.kOff);
+				geartSel.set(Value.kOff);
 			}
 		}
-		if(leftJoystick.getRawButton(4)|| xboxController.getBumper(Hand.kLeft)) {
-			Arm.set(Value.kForward);
+		
+		// Arm pneumatics
+		if (leftJoystick.getRawButton(4)|| xboxController.getBumper(Hand.kLeft)) {
+			armSel.set(Value.kForward);
 		}
-		else if(leftJoystick.getRawButton(5)|| xboxController.getBumper(Hand.kRight)) {
-			Arm.set(Value.kReverse);
-		}
-		else {
-			Arm.set(Value.kOff);
-		}
-		if(leftJoystick.getRawButton(3)|| xboxController.getBButton()) {
-			Extension.set(Value.kForward);
-		}
-		else if(leftJoystick.getRawButton(2)|| xboxController.getXButton()) {
-			Extension.set(Value.kReverse);
+		else if (leftJoystick.getRawButton(5)|| xboxController.getBumper(Hand.kRight)) {
+			armSel.set(Value.kReverse);
 		}
 		else {
-			Extension.set(Value.kOff);
+			armSel.set(Value.kOff);
 		}
+		
+		// Extension pneumatics
+		if (leftJoystick.getRawButton(3)|| xboxController.getBButton()) {
+			extensionSel.set(Value.kForward);
+		}
+		else if (leftJoystick.getRawButton(2)|| xboxController.getXButton()) {
+			extensionSel.set(Value.kReverse);
+		}
+		else {
+			extensionSel.set(Value.kOff);
+		}
+		
 	}
 
 	/**
