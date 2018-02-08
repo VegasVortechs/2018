@@ -149,6 +149,24 @@ public class Robot extends TimedRobot {
 				testSel.set(Value.kOff);
 			}
 		}
+		if(leftJoystick.getRawButton(4)|| xboxController.getBumper(Hand.kLeft)) {
+			Arm.set(Value.kForward);
+		}
+		else if(leftJoystick.getRawButton(5)|| xboxController.getBumper(Hand.kRight)) {
+			Arm.set(Value.kReverse);
+		}
+		else {
+			Arm.set(Value.kOff);
+		}
+		if(leftJoystick.getRawButton(3)|| xboxController.getBButton()) {
+			Extension.set(Value.kForward);
+		}
+		else if(leftJoystick.getRawButton(2)|| xboxController.getXButton()) {
+			Extension.set(Value.kReverse);
+		}
+		else {
+			Extension.set(Value.kOff);
+		}
 	}
 
 	/**
