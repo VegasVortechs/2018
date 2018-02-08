@@ -1,4 +1,4 @@
-// Version Mammoth 0.7c
+// Version sloth 0.8
 
 package org.usfirst.frc.team6519.robot;
 
@@ -46,7 +46,9 @@ public class Robot extends TimedRobot {
 	
 	Compressor compressor = new Compressor(1);
 	DoubleSolenoid testSel = new DoubleSolenoid(1, 0, 1);
-
+	DoubleSolenoid Arm = new DoubleSolenoid(1, 2, 3);
+	DoubleSolenoid Extension = new DoubleSolenoid(1, 4, 5);
+	DoubleSolenoid Claw = new DoubleSolenoid(1, 6, 7);
 	/**
 	 * This function is run when the robot is first started up and should be
 	 * used for any initialization code.
@@ -137,10 +139,10 @@ public class Robot extends TimedRobot {
 		
 		// Gear shift penumatics
 		if (Math.abs(leftMotor.get()) > 0.1 || Math.abs(rightMotor.get()) > 0.1) {
-			if (rightJoystick.getRawButton(6) || xboxController.getYButton()) {
+			if (rightJoystick.getRawButton(3) || xboxController.getYButton()) {
 				testSel.set(Value.kForward);
 			}
-			else if (rightJoystick.getRawButton(7) || xboxController.getAButton()) {
+			else if (rightJoystick.getRawButton(2) || xboxController.getAButton()) {
 				testSel.set(Value.kReverse);
 			}
 			else {
