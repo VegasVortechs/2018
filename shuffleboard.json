@@ -1,5 +1,5 @@
 {
-  "dividerPosition": 0.2365911799761621,
+  "dividerPosition": 0.17375366568914957,
   "tabPane": [
     {
       "title": "SmartDashboard",
@@ -10,30 +10,114 @@
         "hgap": 16.0,
         "vgap": 16.0,
         "tiles": {
-          "2,0": {
+          "0,0": {
             "size": [
               2,
               2
             ],
             "content": {
+              "_type": "Text View",
+              "_title": "Current Gear"
+            }
+          },
+          "5,0": {
+            "size": [
+              1,
+              3
+            ],
+            "content": {
+              "_type": "List Layout",
+              "_title": "Penumatics",
+              "_children": [
+                {
+                  "_type": "Toggle Switch",
+                  "_title": "Arm"
+                },
+                {
+                  "_type": "Toggle Switch",
+                  "_title": "Extention"
+                },
+                {
+                  "_type": "Toggle Switch",
+                  "_title": "Claw"
+                }
+              ]
+            }
+          },
+          "0,2": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
               "_type": "Simple Dial",
-              "_title": "Left Motor Output",
+              "_title": "Left Motor",
               "minValue": -100.0,
               "maxValue": 100.0,
               "valueVisible": true
             }
           },
-          "4,0": {
+          "1,2": {
             "size": [
-              2,
-              2
+              1,
+              1
             ],
             "content": {
               "_type": "Simple Dial",
-              "_title": "Right Motor Output",
+              "_title": "Right Motor",
               "minValue": -100.0,
               "maxValue": 100.0,
               "valueVisible": true
+            }
+          },
+          "6,0": {
+            "size": [
+              1,
+              4
+            ],
+            "content": {
+              "_type": "List Layout",
+              "_title": "Controls",
+              "_children": [
+                {
+                  "_type": "Text View",
+                  "_title": "Gear Shift"
+                },
+                {
+                  "_type": "Text View",
+                  "_title": "Arm"
+                },
+                {
+                  "_type": "Text View",
+                  "_title": "Extend"
+                },
+                {
+                  "_type": "Text View",
+                  "_title": "Claw"
+                }
+              ]
+            }
+          },
+          "2,2": {
+            "size": [
+              3,
+              2
+            ],
+            "content": {
+              "_type": "PDP",
+              "_title": "PDP",
+              "showIndicatorText": true
+            }
+          },
+          "2,0": {
+            "size": [
+              3,
+              2
+            ],
+            "content": {
+              "_type": "Graph",
+              "_title": "Voltage",
+              "Visible time": 30.0
             }
           }
         }

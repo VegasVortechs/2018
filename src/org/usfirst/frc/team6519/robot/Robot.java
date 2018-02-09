@@ -1,4 +1,4 @@
-// Version Sloth 0.8b
+// Version Bear 0.9
 
 package org.usfirst.frc.team6519.robot;
 
@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -42,13 +43,19 @@ public class Robot extends TimedRobot {
 	XboxController xboxController = new XboxController(2);
 	
 	DifferentialDrive robotDrive = new DifferentialDrive(leftMotor, rightMotor);
-
 	
 	Compressor compressor = new Compressor(1);
 	DoubleSolenoid geartSel = new DoubleSolenoid(1, 0, 1);
 	DoubleSolenoid armSel = new DoubleSolenoid(1, 2, 3);
 	DoubleSolenoid extensionSel = new DoubleSolenoid(1, 4, 5);
 	DoubleSolenoid clawSel = new DoubleSolenoid(1, 6, 7);
+	
+	boolean armExtended = false;
+	boolean gearExtended = false;
+	boolean extendExtended = false;
+	boolean clawClosed = false;
+	
+	PowerDistributionPanel pdp = new PowerDistributionPanel();
 	/**
 	 * This function is run when the robot is first started up and should be
 	 * used for any initialization code.
@@ -58,6 +65,12 @@ public class Robot extends TimedRobot {
 		m_chooser.addDefault("Default Auto", kDefaultAuto);
 		m_chooser.addObject("My Auto", kCustomAuto);
 		SmartDashboard.putData("Auto choices", m_chooser);
+		
+		SmartDashboard.putString("Current Gear", "Torque");
+		SmartDashboard.putBoolean("Arm", false);
+		SmartDashboard.putBoolean("Extention", false);
+		SmartDashboard.putBoolean("Claw", false);
+		SmartDashboard.putData("PDP", pdp);
 		
 		leftMotor.setNeutralMode(NeutralMode.Brake);
 		rightMotor.setNeutralMode(NeutralMode.Brake);
@@ -139,11 +152,17 @@ public class Robot extends TimedRobot {
 		
 		// Gear shift penumatics
 		if (Math.abs(leftMotor.get()) > 0.1 || Math.abs(rightMotor.get()) > 0.1) {
-			if (rightJoystick.getRawButton(3) || xboxController.getYButton()) {
-				geartSel.set(Value.kForward);
-			}
-			else if (rightJoystick.getRawButton(2) || xboxController.getAButton()) {
-				geartSel.set(Value.kReverse);
+			if (rightJoystick.getRawButton(2) || xboxController.getYButton()) {
+				if (!gearExtended) {
+					geartSel.set(Value.kForward);
+					gearExtended = true;
+					SmartDashboard.putString("Current Gear", "Torque");
+				}
+				else {
+					geartSel.set(Value.kReverse);
+					gearExtended = false;
+					SmartDashboard.putString("Current Gear", "Speed");
+				}
 			}
 			else {
 				geartSel.set(Value.kOff);
@@ -152,26 +171,56 @@ public class Robot extends TimedRobot {
 		
 		// Arm pneumatics
 		if (leftJoystick.getRawButton(4)|| xboxController.getBumper(Hand.kLeft)) {
-			armSel.set(Value.kForward);
-		}
-		else if (leftJoystick.getRawButton(5)|| xboxController.getBumper(Hand.kRight)) {
-			armSel.set(Value.kReverse);
+			if (!armExtended) {
+				armSel.set(Value.kForward);
+				armExtended = true;
+				SmartDashboard.putBoolean("Arm", true);
+			}
+			else {
+				armSel.set(Value.kForward);
+				armExtended = false;
+				SmartDashboard.putBoolean("Arm", false);
+			}
 		}
 		else {
 			armSel.set(Value.kOff);
 		}
 		
 		// Extension pneumatics
-		if (leftJoystick.getRawButton(3)|| xboxController.getBButton()) {
-			extensionSel.set(Value.kForward);
-		}
-		else if (leftJoystick.getRawButton(2)|| xboxController.getXButton()) {
-			extensionSel.set(Value.kReverse);
+		if (leftJoystick.getRawButton(3)|| xboxController.getBumper(Hand.kRight)) {
+			if (!extendExtended) {
+				extensionSel.set(Value.kForward);
+				extendExtended = true;
+				SmartDashboard.putBoolean("Extention", true);
+			}
+			else {
+				extensionSel.set(Value.kReverse);
+				extendExtended = false;
+				SmartDashboard.putBoolean("Extention", false);
+			}
 		}
 		else {
 			extensionSel.set(Value.kOff);
 		}
 		
+		// Claw pneumatics
+		if (leftJoystick.getRawButton(5) || xboxController.getAButton()) {
+			if (!clawClosed) {
+				clawSel.set(Value.kForward);
+				clawClosed = true;
+				SmartDashboard.putBoolean("Claw", true);
+			}
+			else {
+				clawSel.set(Value.kReverse);
+				clawClosed = false;
+				SmartDashboard.putBoolean("Claw", false);
+			}
+		}
+		
+		SmartDashboard.putNumber("Voltage", pdp.getVoltage());
+		SmartDashboard.putNumber("Left Motor", leftMotor.get() * 100);
+		SmartDashboard.putNumber("Right Motor", rightMotor.get() * 100);
+//		SmartDashboard.putData("PDP", pdp);
 	}
 
 	/**
