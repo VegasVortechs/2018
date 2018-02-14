@@ -10,40 +10,6 @@
         "hgap": 16.0,
         "vgap": 16.0,
         "tiles": {
-          "0,0": {
-            "size": [
-              2,
-              2
-            ],
-            "content": {
-              "_type": "Text View",
-              "_title": "Current Gear"
-            }
-          },
-          "5,0": {
-            "size": [
-              1,
-              3
-            ],
-            "content": {
-              "_type": "List Layout",
-              "_title": "Penumatics",
-              "_children": [
-                {
-                  "_type": "Toggle Switch",
-                  "_title": "Arm"
-                },
-                {
-                  "_type": "Toggle Switch",
-                  "_title": "Extention"
-                },
-                {
-                  "_type": "Toggle Switch",
-                  "_title": "Claw"
-                }
-              ]
-            }
-          },
           "0,2": {
             "size": [
               1,
@@ -51,9 +17,10 @@
             ],
             "content": {
               "_type": "Simple Dial",
+              "_source0": "network_table:///SmartDashboard/Left Motor",
               "_title": "Left Motor",
-              "minValue": -100.0,
-              "maxValue": 100.0,
+              "minValue": -1.0,
+              "maxValue": 1.0,
               "valueVisible": true
             }
           },
@@ -64,9 +31,10 @@
             ],
             "content": {
               "_type": "Simple Dial",
+              "_source0": "network_table:///SmartDashboard/Right Motor",
               "_title": "Right Motor",
-              "minValue": -100.0,
-              "maxValue": 100.0,
+              "minValue": -1.0,
+              "maxValue": 1.0,
               "valueVisible": true
             }
           },
@@ -105,6 +73,7 @@
             ],
             "content": {
               "_type": "PDP",
+              "_source0": "network_table:///SmartDashboard/PDP",
               "_title": "PDP",
               "showIndicatorText": true
             }
@@ -116,8 +85,75 @@
             ],
             "content": {
               "_type": "Graph",
+              "_source0": "network_table:///SmartDashboard/PDP/Voltage",
               "_title": "Voltage",
-              "Visible time": 30.0
+              "Visible time": 30.0,
+              "SmartDashboard/PDP/Voltage visible": true
+            }
+          },
+          "5,3": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Toggle Switch",
+              "_title": "Robot Drive"
+            }
+          },
+          "0,0": {
+            "size": [
+              2,
+              2
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Current Gear",
+              "_title": "Current Gear"
+            }
+          },
+          "5,0": {
+            "size": [
+              1,
+              3
+            ],
+            "content": {
+              "_type": "List Layout",
+              "_title": "Pneumatics",
+              "_children": [
+                {
+                  "_type": "Boolean Box",
+                  "_source0": "network_table:///SmartDashboard/Arm",
+                  "_title": "Arm",
+                  "colorWhenTrue": "#7CFC00FF",
+                  "colorWhenFalse": "#8B0000FF"
+                },
+                {
+                  "_type": "Boolean Box",
+                  "_source0": "network_table:///SmartDashboard/Claw",
+                  "_title": "Claw",
+                  "colorWhenTrue": "#7CFC00FF",
+                  "colorWhenFalse": "#8B0000FF"
+                },
+                {
+                  "_type": "Boolean Box",
+                  "_source0": "network_table:///SmartDashboard/Extention",
+                  "_title": "Extension",
+                  "colorWhenTrue": "#7CFC00FF",
+                  "colorWhenFalse": "#8B0000FF"
+                }
+              ]
+            }
+          },
+          "0,3": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Left Encoder",
+              "_title": "Left Encoder"
             }
           }
         }
@@ -131,7 +167,83 @@
         "gridSize": 128.0,
         "hgap": 16.0,
         "vgap": 16.0,
-        "tiles": {}
+        "tiles": {
+          "0,0": {
+            "size": [
+              2,
+              4
+            ],
+            "content": {
+              "_type": "List Layout",
+              "_source0": "network_table:///LiveWindow/Ungrouped",
+              "_title": "Ungrouped",
+              "_children": [
+                {
+                  "_type": "Boolean Box",
+                  "_source0": "network_table:///LiveWindow/Ungrouped/Compressor[1]/Enabled",
+                  "_title": "Compressor[1]/Enabled",
+                  "colorWhenTrue": "#7CFC00FF",
+                  "colorWhenFalse": "#8B0000FF"
+                },
+                {
+                  "_type": "Speed Controller",
+                  "_source0": "network_table:///LiveWindow/Ungrouped/Talon SRX [12]",
+                  "_title": "Talon SRX [12]",
+                  "controllable": false,
+                  "orientation": "HORIZONTAL"
+                },
+                {
+                  "_type": "Differential Drivebase",
+                  "_source0": "network_table:///LiveWindow/Ungrouped/DifferentialDrive[1]",
+                  "_title": "DifferentialDrive[1]",
+                  "numberOfWheels": 4,
+                  "wheelDiameter": 80.0,
+                  "showVectors": true
+                },
+                {
+                  "_type": "Speed Controller",
+                  "_source0": "network_table:///LiveWindow/Ungrouped/Talon SRX [13]",
+                  "_title": "Talon SRX [13]",
+                  "controllable": false,
+                  "orientation": "HORIZONTAL"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///LiveWindow/Ungrouped/DoubleSolenoid[1,0]/Value",
+                  "_title": "DoubleSolenoid[1,0]/Value"
+                },
+                {
+                  "_type": "Boolean Box",
+                  "_source0": "network_table:///LiveWindow/Ungrouped/Compressor[1]/Pressure switch",
+                  "_title": "Compressor[1]/Pressure switch",
+                  "colorWhenTrue": "#7CFC00FF",
+                  "colorWhenFalse": "#8B0000FF"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///LiveWindow/Ungrouped/DoubleSolenoid[1,2]/Value",
+                  "_title": "DoubleSolenoid[1,2]/Value"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///LiveWindow/Ungrouped/DoubleSolenoid[1,4]/Value",
+                  "_title": "DoubleSolenoid[1,4]/Value"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///LiveWindow/Ungrouped/DoubleSolenoid[1,6]/Value",
+                  "_title": "DoubleSolenoid[1,6]/Value"
+                },
+                {
+                  "_type": "PDP",
+                  "_source0": "network_table:///LiveWindow/Ungrouped/PowerDistributionPanel[0]",
+                  "_title": "PowerDistributionPanel[0]",
+                  "showIndicatorText": true
+                }
+              ]
+            }
+          }
+        }
       }
     }
   ]

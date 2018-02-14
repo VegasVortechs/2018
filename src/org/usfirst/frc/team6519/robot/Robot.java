@@ -62,9 +62,9 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void robotInit() {
-		m_chooser.addDefault("Default Auto", kDefaultAuto);
-		m_chooser.addObject("My Auto", kCustomAuto);
-		SmartDashboard.putData("Auto choices", m_chooser);
+//		m_chooser.addDefault("Default Auto", kDefaultAuto);
+//		m_chooser.addObject("My Auto", kCustomAuto);
+//		SmartDashboard.putData("Auto choices", m_chooser);
 		
 		SmartDashboard.putString("Current Gear", "Torque");
 		SmartDashboard.putBoolean("Arm", false);
@@ -77,6 +77,7 @@ public class Robot extends TimedRobot {
 		leftSlave.setNeutralMode(NeutralMode.Brake);
 		rightSlave.setNeutralMode(NeutralMode.Brake);
 		
+		leftMotor.configSelectedFeedbackSensor(com.ctre.phoenix.motorcontrol.FeedbackDevice.QuadEncoder, 0, 0);
 		
 		leftSlave.follow(leftMotor);	
 		rightSlave.follow(rightMotor);
@@ -114,15 +115,15 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void autonomousPeriodic() {
-		switch (m_autoSelected) {
-			case kCustomAuto:
-				// Put custom auto code here
-				break;
-			case kDefaultAuto:
-			default:
-				// Put default auto code here
-				break;
-		}
+//		switch (m_autoSelected) {
+//			case kCustomAuto:
+//				// Put custom auto code here
+//				break;
+//			case kDefaultAuto:
+//			default:
+//				// Put default auto code here
+//				break;
+//		}
 	}
 
 	/**
@@ -135,6 +136,8 @@ public class Robot extends TimedRobot {
 		double rightInput = rightJoystick.getY() + xboxController.getY(Hand.kRight);
 		
 		robotDrive.tankDrive(leftInput, rightInput, true);
+		
+		SmartDashboard.putNumber("Left Encoder", leftMotor.getSelectedSensorPosition(0));
 		
 //		// Xbox Rumble
 //		if (xboxController.getY(Hand.kLeft) > 0.9 ) {
@@ -152,7 +155,7 @@ public class Robot extends TimedRobot {
 		
 		// Gear shift penumatics
 		if (Math.abs(leftMotor.get()) > 0.1 || Math.abs(rightMotor.get()) > 0.1) {
-			if (rightJoystick.getRawButton(2) || xboxController.getYButton()) {
+			if (leftJoystick.getRawButtonPressed(3) || xboxController.getYButtonPressed()) {
 				if (!gearExtended) {
 					geartSel.set(Value.kForward);
 					gearExtended = true;
@@ -170,24 +173,22 @@ public class Robot extends TimedRobot {
 		}
 		
 		// Arm pneumatics
-		if (leftJoystick.getRawButton(4)|| xboxController.getBumper(Hand.kLeft)) {
-			if (!armExtended) {
-				armSel.set(Value.kForward);
-				armExtended = true;
-				SmartDashboard.putBoolean("Arm", true);
-			}
-			else {
-				armSel.set(Value.kForward);
-				armExtended = false;
-				SmartDashboard.putBoolean("Arm", false);
-			}
+		if (rightJoystick.getRawButtonPressed(3)|| xboxController.getTriggerAxis(Hand.kRight) > 0.1) {
+			armSel.set(Value.kForward);
+			armExtended = true;
+			SmartDashboard.putBoolean("Arm", true);
+		}	
+		else if (rightJoystick.getRawButtonPressed(2)|| xboxController.getTriggerAxis(Hand.kLeft) > 0.1) {
+			armSel.set(Value.kReverse);
+			armExtended = false;
+			SmartDashboard.putBoolean("Arm", false);
 		}
 		else {
 			armSel.set(Value.kOff);
 		}
 		
 		// Extension pneumatics
-		if (leftJoystick.getRawButton(3)|| xboxController.getBumper(Hand.kRight)) {
+		if (rightJoystick.getRawButtonPressed(5)|| xboxController.getBumperPressed(Hand.kRight)) {
 			if (!extendExtended) {
 				extensionSel.set(Value.kForward);
 				extendExtended = true;
@@ -204,7 +205,7 @@ public class Robot extends TimedRobot {
 		}
 		
 		// Claw pneumatics
-		if (leftJoystick.getRawButton(5) || xboxController.getAButton()) {
+		if (rightJoystick.getRawButtonPressed(4) || xboxController.getBumperPressed(Hand.kLeft)) {
 			if (!clawClosed) {
 				clawSel.set(Value.kForward);
 				clawClosed = true;
@@ -216,11 +217,12 @@ public class Robot extends TimedRobot {
 				SmartDashboard.putBoolean("Claw", false);
 			}
 		}
+		else {
+			clawSel.set(Value.kOff);
+		}
 		
-		SmartDashboard.putNumber("Voltage", pdp.getVoltage());
-		SmartDashboard.putNumber("Left Motor", leftMotor.get() * 100);
-		SmartDashboard.putNumber("Right Motor", rightMotor.get() * 100);
-//		SmartDashboard.putData("PDP", pdp);
+		SmartDashboard.putNumber("Left Motor", leftMotor.get());
+		SmartDashboard.putNumber("Right Motor", rightMotor.get());
 	}
 
 	/**
