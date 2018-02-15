@@ -1,12 +1,14 @@
-// Version Bear 0.9
+// Version Bear 0.9c
 
 package org.usfirst.frc.team6519.robot;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.Joystick;
@@ -14,6 +16,7 @@ import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -25,10 +28,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * project.
  */
 public class Robot extends TimedRobot {
-	private static final String kDefaultAuto = "Default";
-	private static final String kCustomAuto = "My Auto";
-	private String m_autoSelected;
-	private SendableChooser<String> m_chooser = new SendableChooser<>();
+	private static final String kMidAuto = "Middle";
+	private static final String kLeftAuto = "Left";
+	private static final String kRightAuto = "Right";
+	
+	private String autoSelected;
+	private SendableChooser<String> autoChooser = new SendableChooser<>();
 	
 	WPI_TalonSRX leftMotor = new WPI_TalonSRX(10);
 	WPI_TalonSRX rightMotor = new WPI_TalonSRX(11);
@@ -55,22 +60,25 @@ public class Robot extends TimedRobot {
 	boolean extendExtended = false;
 	boolean clawClosed = false;
 	
-	PowerDistributionPanel pdp = new PowerDistributionPanel();
+//	PowerDistributionPanel pdp;
 	/**
 	 * This function is run when the robot is first started up and should be
 	 * used for any initialization code.
 	 */
 	@Override
 	public void robotInit() {
-//		m_chooser.addDefault("Default Auto", kDefaultAuto);
-//		m_chooser.addObject("My Auto", kCustomAuto);
-//		SmartDashboard.putData("Auto choices", m_chooser);
+		autoChooser.addDefault("Middle", kMidAuto);
+		autoChooser.addObject("Left", kLeftAuto);
+		autoChooser.addObject("Right", kRightAuto);
+		SmartDashboard.putData("Autonomouse Mode", autoChooser);
+		
+//		pdp = new PowerDistributionPanel();
+//		LiveWindow.disableTelemetry(pdp);
 		
 		SmartDashboard.putString("Current Gear", "Torque");
 		SmartDashboard.putBoolean("Arm", false);
 		SmartDashboard.putBoolean("Extention", false);
 		SmartDashboard.putBoolean("Claw", false);
-		SmartDashboard.putData("PDP", pdp);
 		
 		leftMotor.setNeutralMode(NeutralMode.Brake);
 		rightMotor.setNeutralMode(NeutralMode.Brake);
@@ -78,6 +86,7 @@ public class Robot extends TimedRobot {
 		rightSlave.setNeutralMode(NeutralMode.Brake);
 		
 		leftMotor.configSelectedFeedbackSensor(com.ctre.phoenix.motorcontrol.FeedbackDevice.QuadEncoder, 0, 0);
+		rightMotor.configSelectedFeedbackSensor(com.ctre.phoenix.motorcontrol.FeedbackDevice.QuadEncoder, 0, 0);
 		
 		leftSlave.follow(leftMotor);	
 		rightSlave.follow(rightMotor);
@@ -104,10 +113,12 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void autonomousInit() {
-		m_autoSelected = m_chooser.getSelected();
-//		 m_autoSelected = SmartDashboard.getString("Auto Selector",
-//		 		kDefaultAuto);
-		System.out.println("Auto selected: " + m_autoSelected);
+		autoSelected = autoChooser.getSelected();
+		autoSelected = SmartDashboard.getString("Autonomous Mode",
+		 		kMidAuto);
+		System.out.println("Auto selected: " + autoSelected);
+		leftMotor.setSelectedSensorPosition(0, 0, 0);
+		rightMotor.setSelectedSensorPosition(0, 0, 0);
 	}
 
 	/**
@@ -115,15 +126,19 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void autonomousPeriodic() {
-//		switch (m_autoSelected) {
-//			case kCustomAuto:
-//				// Put custom auto code here
-//				break;
-//			case kDefaultAuto:
-//			default:
-//				// Put default auto code here
-//				break;
-//		}
+		switch (autoSelected) {
+			case kMidAuto:
+				leftMotor.set(ControlMode.Position, 160);
+				rightMotor.set(ControlMode.Position, 160);
+				break;
+			case kLeftAuto:
+				break;
+			case kRightAuto:
+				break;
+			default:
+				// Put default auto code here
+				break;
+		}
 	}
 
 	/**
@@ -138,6 +153,7 @@ public class Robot extends TimedRobot {
 		robotDrive.tankDrive(leftInput, rightInput, true);
 		
 		SmartDashboard.putNumber("Left Encoder", leftMotor.getSelectedSensorPosition(0));
+		SmartDashboard.putNumber("Right Encoder", rightMotor.getSelectedSensorPosition(0));
 		
 //		// Xbox Rumble
 //		if (xboxController.getY(Hand.kLeft) > 0.9 ) {
@@ -153,7 +169,7 @@ public class Robot extends TimedRobot {
 //			xboxController.setRumble(RumbleType.kRightRumble, 0);
 //		}
 		
-		// Gear shift penumatics
+		// Gear shift penumpatics
 		if (Math.abs(leftMotor.get()) > 0.1 || Math.abs(rightMotor.get()) > 0.1) {
 			if (leftJoystick.getRawButtonPressed(3) || xboxController.getYButtonPressed()) {
 				if (!gearExtended) {
@@ -221,7 +237,7 @@ public class Robot extends TimedRobot {
 			clawSel.set(Value.kOff);
 		}
 		
-		SmartDashboard.putNumber("Left Motor", leftMotor.get());
+		SmartDashboard.putNumber("Left Motor", -leftMotor.get());
 		SmartDashboard.putNumber("Right Motor", rightMotor.get());
 	}
 

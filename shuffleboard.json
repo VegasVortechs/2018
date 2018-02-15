@@ -1,5 +1,5 @@
 {
-  "dividerPosition": 0.17375366568914957,
+  "dividerPosition": 0.17359050445103857,
   "tabPane": [
     {
       "title": "SmartDashboard",
@@ -7,10 +7,11 @@
       "autoPopulatePrefix": "SmartDashboard/",
       "widgetPane": {
         "gridSize": 128.0,
+        "showGrid": true,
         "hgap": 16.0,
         "vgap": 16.0,
         "tiles": {
-          "0,2": {
+          "0,1": {
             "size": [
               1,
               1
@@ -24,7 +25,7 @@
               "valueVisible": true
             }
           },
-          "1,2": {
+          "1,1": {
             "size": [
               1,
               1
@@ -86,9 +87,8 @@
             "content": {
               "_type": "Graph",
               "_source0": "network_table:///SmartDashboard/PDP/Voltage",
-              "_title": "Voltage",
-              "Visible time": 30.0,
-              "SmartDashboard/PDP/Voltage visible": true
+              "_title": "/SmartDashboard/PDP/Voltage",
+              "Visible time": 30.0
             }
           },
           "5,3": {
@@ -104,7 +104,7 @@
           "0,0": {
             "size": [
               2,
-              2
+              1
             ],
             "content": {
               "_type": "Text View",
@@ -145,7 +145,7 @@
               ]
             }
           },
-          "0,3": {
+          "0,2": {
             "size": [
               1,
               1
@@ -154,6 +154,28 @@
               "_type": "Text View",
               "_source0": "network_table:///SmartDashboard/Left Encoder",
               "_title": "Left Encoder"
+            }
+          },
+          "0,3": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "ComboBox Chooser",
+              "_source0": "network_table:///SmartDashboard/Autonomouse Mode",
+              "_title": "Autonomous Mode"
+            }
+          },
+          "1,2": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Right Encoder",
+              "_title": "/SmartDashboard/Right Encoder"
             }
           }
         }
@@ -165,6 +187,7 @@
       "autoPopulatePrefix": "LiveWindow/",
       "widgetPane": {
         "gridSize": 128.0,
+        "showGrid": true,
         "hgap": 16.0,
         "vgap": 16.0,
         "tiles": {
@@ -175,7 +198,6 @@
             ],
             "content": {
               "_type": "List Layout",
-              "_source0": "network_table:///LiveWindow/Ungrouped",
               "_title": "Ungrouped",
               "_children": [
                 {
@@ -233,6 +255,81 @@
                   "_type": "Text View",
                   "_source0": "network_table:///LiveWindow/Ungrouped/DoubleSolenoid[1,6]/Value",
                   "_title": "DoubleSolenoid[1,6]/Value"
+                },
+                {
+                  "_type": "PDP",
+                  "_source0": "network_table:///LiveWindow/Ungrouped/PowerDistributionPanel[0]",
+                  "_title": "PowerDistributionPanel[0]",
+                  "showIndicatorText": true
+                }
+              ]
+            }
+          },
+          "2,0": {
+            "size": [
+              2,
+              4
+            ],
+            "content": {
+              "_type": "Subsystem Layout",
+              "_source0": "network_table:///LiveWindow/Ungrouped",
+              "_title": "Ungrouped",
+              "_children": [
+                {
+                  "_type": "Speed Controller",
+                  "_source0": "network_table:///LiveWindow/Ungrouped/Talon SRX [13]",
+                  "_title": "Talon SRX [13]",
+                  "controllable": false,
+                  "orientation": "HORIZONTAL"
+                },
+                {
+                  "_type": "Differential Drivebase",
+                  "_source0": "network_table:///LiveWindow/Ungrouped/DifferentialDrive[1]",
+                  "_title": "DifferentialDrive[1]",
+                  "numberOfWheels": 4,
+                  "wheelDiameter": 80.0,
+                  "showVectors": true
+                },
+                {
+                  "_type": "Speed Controller",
+                  "_source0": "network_table:///LiveWindow/Ungrouped/Talon SRX [12]",
+                  "_title": "Talon SRX [12]",
+                  "controllable": false,
+                  "orientation": "HORIZONTAL"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///LiveWindow/Ungrouped/DoubleSolenoid[1,2]/Value",
+                  "_title": "DoubleSolenoid[1,2]/Value"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///LiveWindow/Ungrouped/DoubleSolenoid[1,6]/Value",
+                  "_title": "DoubleSolenoid[1,6]/Value"
+                },
+                {
+                  "_type": "Boolean Box",
+                  "_source0": "network_table:///LiveWindow/Ungrouped/Compressor[1]/Pressure switch",
+                  "_title": "Compressor[1]/Pressure switch",
+                  "colorWhenTrue": "#7CFC00FF",
+                  "colorWhenFalse": "#8B0000FF"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///LiveWindow/Ungrouped/DoubleSolenoid[1,0]/Value",
+                  "_title": "DoubleSolenoid[1,0]/Value"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///LiveWindow/Ungrouped/DoubleSolenoid[1,4]/Value",
+                  "_title": "DoubleSolenoid[1,4]/Value"
+                },
+                {
+                  "_type": "Boolean Box",
+                  "_source0": "network_table:///LiveWindow/Ungrouped/Compressor[1]/Enabled",
+                  "_title": "Compressor[1]/Enabled",
+                  "colorWhenTrue": "#7CFC00FF",
+                  "colorWhenFalse": "#8B0000FF"
                 },
                 {
                   "_type": "PDP",
