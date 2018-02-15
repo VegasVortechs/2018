@@ -175,7 +175,7 @@
             "content": {
               "_type": "Text View",
               "_source0": "network_table:///SmartDashboard/Right Encoder",
-              "_title": "/SmartDashboard/Right Encoder"
+              "_title": "Right Encoder"
             }
           }
         }
