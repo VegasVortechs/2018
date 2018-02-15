@@ -1,4 +1,4 @@
-// Version Bear 0.9c
+// Version Bear 0.9d
 
 package org.usfirst.frc.team6519.robot;
 
@@ -50,8 +50,8 @@ public class Robot extends TimedRobot {
 	DifferentialDrive robotDrive = new DifferentialDrive(leftMotor, rightMotor);
 	
 	Compressor compressor = new Compressor(1);
-	DoubleSolenoid geartSel = new DoubleSolenoid(1, 0, 1);
-	DoubleSolenoid armSel = new DoubleSolenoid(1, 2, 3);
+	DoubleSolenoid geartSel = new DoubleSolenoid(1, 2, 3);
+	DoubleSolenoid armSel = new DoubleSolenoid(1, 0, 1);
 	DoubleSolenoid extensionSel = new DoubleSolenoid(1, 4, 5);
 	DoubleSolenoid clawSel = new DoubleSolenoid(1, 6, 7);
 	
@@ -128,8 +128,10 @@ public class Robot extends TimedRobot {
 	public void autonomousPeriodic() {
 		switch (autoSelected) {
 			case kMidAuto:
-				leftMotor.set(ControlMode.Position, 160);
-				rightMotor.set(ControlMode.Position, 160);
+				if (leftMotor.getSelectedSensorPosition(0) < 1600) {
+					leftMotor.set(0.5);
+					rightMotor.set(0.5);
+				}
 				break;
 			case kLeftAuto:
 				break;
