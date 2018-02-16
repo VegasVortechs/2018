@@ -1,4 +1,4 @@
-// Version Bear 0.9f
+// Version Bear 0.9g
 
 package org.usfirst.frc.team6519.robot;
 
@@ -104,14 +104,19 @@ public class Robot extends TimedRobot {
 		leftMotor.configSelectedFeedbackSensor(com.ctre.phoenix.motorcontrol.FeedbackDevice.QuadEncoder, 0, 0);
 		rightMotor.configSelectedFeedbackSensor(com.ctre.phoenix.motorcontrol.FeedbackDevice.QuadEncoder, 0, 0);
 		
+		leftMotor.setInverted(true);
+		leftSlave.setInverted(true);
+		rightMotor.setInverted(true);
+		rightSlave.setInverted(true);
+		
 		leftSlave.follow(leftMotor);	
 		rightSlave.follow(rightMotor);
 
 		
-		leftMotor.enableVoltageCompensation(true);
-		leftSlave.enableVoltageCompensation(true);
-		rightMotor.enableVoltageCompensation(true);
-		rightSlave.enableVoltageCompensation(true);
+//		leftMotor.enableVoltageCompensation(true);
+//		leftSlave.enableVoltageCompensation(true);
+//		rightMotor.enableVoltageCompensation(true);
+//		rightSlave.enableVoltageCompensation(true);
 		
 		compressor.start();
 	}
@@ -142,11 +147,16 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void autonomousPeriodic() {
+		SmartDashboard.putNumber("Left Encoder", leftMotor.getSelectedSensorPosition(0));
+		SmartDashboard.putNumber("Right Encoder", rightMotor.getSelectedSensorPosition(0));
 		switch (autoSelected) {
 			case kMidAuto:
+				leftMotor.set(0.3);
+				rightMotor.set(0.3);
 				if (leftMotor.getSelectedSensorPosition(0) < 1600) {
-					leftMotor.set(0.5);
-					rightMotor.set(0.5);
+//					leftMotor.set(0.3);
+//					rightMotor.set(0.3);
+////					driveStraight(0.5, 0.1);
 				}
 				break;
 			case kLeftAuto:
@@ -170,8 +180,8 @@ public class Robot extends TimedRobot {
 		
 		sensitivity = SmartDashboard.getNumber("Sensitivity", 1) / 3;
 		
-		double leftInput = leftJoystick.getY() +  xboxController.getY(Hand.kLeft);
-		double rightInput = rightJoystick.getY() + xboxController.getY(Hand.kRight);
+		double leftInput = -leftJoystick.getY() +  -xboxController.getY(Hand.kLeft);
+		double rightInput = -rightJoystick.getY() + -xboxController.getY(Hand.kRight);
 		
 		SmartDashboard.putNumber("Left Joystick" , leftInput);
 		SmartDashboard.putNumber("Right Joystick", rightInput);
@@ -209,6 +219,8 @@ public class Robot extends TimedRobot {
 //		else {
 //			xboxController.setRumble(RumbleType.kRightRumble, 0);
 //		}
+		
+		// Nudge Buttons
 		
 		// Gear shift penumpatics
 		if (Math.abs(leftMotor.get()) > 0.1 || Math.abs(rightMotor.get()) > 0.1) {
@@ -288,5 +300,20 @@ public class Robot extends TimedRobot {
 	@Override
 	public void testPeriodic() {
 		
+	}
+	
+	void driveStraight(double speed, double fix) {
+		if (leftMotor.getSelectedSensorPosition(0) > rightMotor.getSelectedSensorPosition(0)) {
+			leftMotor.set(speed - fix);
+			rightMotor.set(-speed);
+		}
+		else if (leftMotor.getSelectedSensorPosition(0) < rightMotor.getSelectedSensorPosition(0)) {
+			leftMotor.set(speed);
+			rightMotor.set(-(speed - fix));
+		}
+		else {
+			leftMotor.set(speed);
+			rightMotor.set(-speed);
+		}
 	}
 }
