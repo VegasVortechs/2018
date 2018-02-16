@@ -1,4 +1,4 @@
-// Version Bear 0.9d
+// Version Bear 0.9e
 
 package org.usfirst.frc.team6519.robot;
 
@@ -32,8 +32,17 @@ public class Robot extends TimedRobot {
 	private static final String kLeftAuto = "Left";
 	private static final String kRightAuto = "Right";
 	
+	private static final String kQuad = "Quadratic";
+	private static final String kLinear = "Linear";
+	private static final String kCubic = "Cubic";
+	
 	private String autoSelected;
 	private SendableChooser<String> autoChooser = new SendableChooser<>();
+	
+	private String velocitySelected;
+	private SendableChooser<String> velocityChooser = new SendableChooser<>();
+	
+	double sensitivity = 1;
 	
 	WPI_TalonSRX leftMotor = new WPI_TalonSRX(10);
 	WPI_TalonSRX rightMotor = new WPI_TalonSRX(11);
@@ -71,6 +80,13 @@ public class Robot extends TimedRobot {
 		autoChooser.addObject("Left", kLeftAuto);
 		autoChooser.addObject("Right", kRightAuto);
 		SmartDashboard.putData("Autonomouse Mode", autoChooser);
+		
+		SmartDashboard.putNumber("Sensitivity", 1);
+		
+		velocityChooser.addDefault("Quadratic", kQuad);
+		velocityChooser.addObject("Linear", kLinear);
+		velocityChooser.addObject("Cubic", kCubic);
+		SmartDashboard.putData("Velocity Gain", velocityChooser);
 		
 //		pdp = new PowerDistributionPanel();
 //		LiveWindow.disableTelemetry(pdp);
@@ -148,9 +164,26 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
+		velocitySelected = velocityChooser.getSelected();
+		velocitySelected = SmartDashboard.getString("Velocity Gain",
+		 		kQuad);
+		
+		sensitivity = SmartDashboard.getNumber("Sensitivity", 1);
 		
 		double leftInput = leftJoystick.getY() + xboxController.getY(Hand.kLeft);
 		double rightInput = rightJoystick.getY() + xboxController.getY(Hand.kRight);
+		
+//		if (velocitySelected == kQuad) {
+//			leftInput = Math.pow(leftInput, 2);
+//			rightInput = Math.pow(rightInput, 2);
+//		}
+//		else if (velocitySelected == kCubic) {
+//			leftInput = Math.pow(leftInput, 3);
+//			rightInput = Math.pow(rightInput, 3);
+//		}
+		
+		leftInput = Math.pow(leftInput, sensitivity);
+		rightInput = Math.pow(rightInput, sensitivity);
 		
 		robotDrive.tankDrive(leftInput, rightInput, true);
 		
