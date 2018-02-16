@@ -1,4 +1,4 @@
-// Version Bear 0.9e
+// Version Bear 0.9f
 
 package org.usfirst.frc.team6519.robot;
 
@@ -168,10 +168,13 @@ public class Robot extends TimedRobot {
 		velocitySelected = SmartDashboard.getString("Velocity Gain",
 		 		kQuad);
 		
-		sensitivity = SmartDashboard.getNumber("Sensitivity", 1);
+		sensitivity = SmartDashboard.getNumber("Sensitivity", 1) / 3;
 		
-		double leftInput = leftJoystick.getY() + xboxController.getY(Hand.kLeft);
+		double leftInput = leftJoystick.getY() +  xboxController.getY(Hand.kLeft);
 		double rightInput = rightJoystick.getY() + xboxController.getY(Hand.kRight);
+		
+		SmartDashboard.putNumber("Left Joystick" , leftInput);
+		SmartDashboard.putNumber("Right Joystick", rightInput);
 		
 //		if (velocitySelected == kQuad) {
 //			leftInput = Math.pow(leftInput, 2);
@@ -182,10 +185,13 @@ public class Robot extends TimedRobot {
 //			rightInput = Math.pow(rightInput, 3);
 //		}
 		
-		leftInput = Math.pow(leftInput, sensitivity);
-		rightInput = Math.pow(rightInput, sensitivity);
+		leftInput = sensitivity * Math.pow(leftInput, 3) + (1-sensitivity) * leftInput;
+		rightInput = sensitivity * Math.pow(rightInput, 3) + (1-sensitivity) * rightInput;
+
 		
-		robotDrive.tankDrive(leftInput, rightInput, true);
+		SmartDashboard.putNumber("Current Sensitivity", sensitivity);
+		
+		robotDrive.tankDrive(leftInput, rightInput, false);
 		
 		SmartDashboard.putNumber("Left Encoder", leftMotor.getSelectedSensorPosition(0));
 		SmartDashboard.putNumber("Right Encoder", rightMotor.getSelectedSensorPosition(0));
