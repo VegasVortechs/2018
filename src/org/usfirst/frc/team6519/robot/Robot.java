@@ -44,8 +44,8 @@ public class Robot extends TimedRobot {
 	
 	double sensitivity = 1;
 	
-	WPI_TalonSRX leftMotor = new WPI_TalonSRX(10);
-	WPI_TalonSRX rightMotor = new WPI_TalonSRX(11);
+	WPI_TalonSRX leftMaster = new WPI_TalonSRX(10);
+	WPI_TalonSRX rightMaster = new WPI_TalonSRX(11);
 	
 	WPI_TalonSRX leftSlave = new WPI_TalonSRX(12);
 	WPI_TalonSRX rightSlave = new WPI_TalonSRX(13);
@@ -56,7 +56,7 @@ public class Robot extends TimedRobot {
 	Joystick rightJoystick = new Joystick(1);
 	XboxController xboxController = new XboxController(2);
 	
-	DifferentialDrive robotDrive = new DifferentialDrive(leftMotor, rightMotor);
+	DifferentialDrive robotDrive = new DifferentialDrive(leftMaster, rightMaster);
 	
 	Compressor compressor = new Compressor(1);
 	DoubleSolenoid geartSel = new DoubleSolenoid(1, 2, 3);
@@ -69,6 +69,7 @@ public class Robot extends TimedRobot {
 	boolean extendExtended = false;
 	boolean clawClosed = false;
 	
+	int autoStage = 0;
 //	PowerDistributionPanel pdp;
 	/**
 	 * This function is run when the robot is first started up and should be
@@ -96,27 +97,29 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putBoolean("Extention", false);
 		SmartDashboard.putBoolean("Claw", false);
 		
-		leftMotor.setNeutralMode(NeutralMode.Brake);
-		rightMotor.setNeutralMode(NeutralMode.Brake);
+		leftMaster.setNeutralMode(NeutralMode.Brake);
+		rightMaster.setNeutralMode(NeutralMode.Brake);
 		leftSlave.setNeutralMode(NeutralMode.Brake);
 		rightSlave.setNeutralMode(NeutralMode.Brake);
 		
-		leftMotor.configSelectedFeedbackSensor(com.ctre.phoenix.motorcontrol.FeedbackDevice.QuadEncoder, 0, 0);
-		rightMotor.configSelectedFeedbackSensor(com.ctre.phoenix.motorcontrol.FeedbackDevice.QuadEncoder, 0, 0);
+		leftMaster.configSelectedFeedbackSensor(com.ctre.phoenix.motorcontrol.FeedbackDevice.QuadEncoder, 0, 0);
+		rightMaster.configSelectedFeedbackSensor(com.ctre.phoenix.motorcontrol.FeedbackDevice.QuadEncoder, 0, 0);
 		
-		leftMotor.setInverted(true);
+		leftMaster.setInverted(true);
 		leftSlave.setInverted(true);
-		rightMotor.setInverted(true);
+		rightMaster.setInverted(true);
 		rightSlave.setInverted(true);
 		
-		leftSlave.follow(leftMotor);	
-		rightSlave.follow(rightMotor);
+		leftSlave.follow(leftMaster);
+		rightSlave.follow(rightMaster);
 
+		leftMaster.enableVoltageCompensation(true);
+		leftSlave.enableVoltageCompensation(true);
+		rightMaster.enableVoltageCompensation(true);
+		rightSlave.enableVoltageCompensation(true);
 		
-//		leftMotor.enableVoltageCompensation(true);
-//		leftSlave.enableVoltageCompensation(true);
-//		rightMotor.enableVoltageCompensation(true);
-//		rightSlave.enableVoltageCompensation(true);
+		leftMaster.setSelectedSensorPosition(0, 0, 0);
+		rightMaster.setSelectedSensorPosition(0, 0, 0);
 		
 		compressor.start();
 	}
@@ -138,8 +141,9 @@ public class Robot extends TimedRobot {
 		autoSelected = SmartDashboard.getString("Autonomous Mode",
 		 		kMidAuto);
 		System.out.println("Auto selected: " + autoSelected);
-		leftMotor.setSelectedSensorPosition(0, 0, 0);
-		rightMotor.setSelectedSensorPosition(0, 0, 0);
+		leftMaster.setSelectedSensorPosition(0, 0, 0);
+		rightMaster.setSelectedSensorPosition(0, 0, 0);
+		autoStage = 1;
 	}
 
 	/**
@@ -147,26 +151,81 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void autonomousPeriodic() {
-		SmartDashboard.putNumber("Left Encoder", leftMotor.getSelectedSensorPosition(0));
-		SmartDashboard.putNumber("Right Encoder", rightMotor.getSelectedSensorPosition(0));
-		switch (autoSelected) {
-			case kMidAuto:
-				leftMotor.set(0.3);
-				rightMotor.set(0.3);
-				if (leftMotor.getSelectedSensorPosition(0) < 1600) {
-//					leftMotor.set(0.3);
-//					rightMotor.set(0.3);
-////					driveStraight(0.5, 0.1);
+		SmartDashboard.putNumber("Left Encoder", leftMaster.getSelectedSensorPosition(0));
+		SmartDashboard.putNumber("Right Encoder", rightMaster.getSelectedSensorPosition(0));
+		
+//		if (leftMaster.getSelectedSensorPosition(0) < 14000 || rightMaster.getSelectedSensorPosition(0) < 14000) {
+//			driveStraight(0.5, 0.05);
+//		}
+//		autoDrive(45, 70, 0.4, 0.6, rightMaster);
+//		autoDrive(77, 110, 0.6, 0.4, leftMaster);
+		
+		
+		if (autoStage == 1) {
+			autoStage = 1;
+			if (leftMaster.getSelectedSensorPosition(0) == 0) {
+				extensionSel.set(Value.kForward);
+				try {
+					Thread.sleep(500);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}		
+				clawSel.set(Value.kForward);
+				try {
+					Thread.sleep(500);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
-				break;
-			case kLeftAuto:
-				break;
-			case kRightAuto:
-				break;
-			default:
-				// Put default auto code here
-				break;
+			}
+			armSel.set(Value.kForward);
+			if (leftMaster.getSelectedSensorPosition(0) < 14000 && rightMaster.getSelectedSensorPosition(0) < 14000) {
+				driveStraight(0.5, 0.05);
+			}
+			else if (leftMaster.getSelectedSensorPosition(0) < 38000 && rightMaster.getSelectedSensorPosition(0) < 38000) {
+				driveStraight(0.5, 0.05);
+			}
+			else if (leftMaster.getSelectedSensorPosition(0) >= 38000 && rightMaster.getSelectedSensorPosition(0) >= 38000) {
+				clawSel.set(Value.kReverse);
+				autoStage = 2;
+			}
 		}
+		if (autoStage == 2) {
+			 if (leftMaster.getSelectedSensorPosition(0) > 10000 || rightMaster.getSelectedSensorPosition(0) > 10000) {
+					driveStraight(-0.5, 0.05);
+			 }
+			 if (leftMaster.getSelectedSensorPosition(0) < 10000) {
+				 autoStage = 3;
+
+			 }
+		}
+		if (autoStage == 3) {
+			autoDrive(20, 80, 0.4, 0.6, leftMaster);
+			autoDrive(80, 150, 0.6, 0.4, rightMaster);
+		}
+		
+		SmartDashboard.putNumber("Auto Stage", autoStage);
+		
+		
+//		switch (autoSelected) {
+//			case kMidAuto:
+////				leftMaster.set(0.3);
+////				rightMaster.set(0.3);
+//				if (leftMaster.getSelectedSensorPosition(0) < 12000) {
+////					leftMaster.set(0.3);
+////					rightMaster.set(-0.3);
+////					driveStraight(0.5, 0.1);
+//				}
+//				break;
+//			case kLeftAuto:
+//				break;
+//			case kRightAuto:
+//				break;
+//			default:
+//				// Put default auto code here
+//				break;
+//		}
 	}
 
 	/**
@@ -174,11 +233,14 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
+		leftMaster.setSelectedSensorPosition(0, 0, 0);
+		rightMaster.setSelectedSensorPosition(0, 0, 0);
+		
 		velocitySelected = velocityChooser.getSelected();
 		velocitySelected = SmartDashboard.getString("Velocity Gain",
 		 		kQuad);
 		
-		sensitivity = SmartDashboard.getNumber("Sensitivity", 1) / 3;
+		sensitivity = SmartDashboard.getNumber("Sensitivity", 1);
 		
 		double leftInput = -leftJoystick.getY() +  -xboxController.getY(Hand.kLeft);
 		double rightInput = -rightJoystick.getY() + -xboxController.getY(Hand.kRight);
@@ -195,16 +257,19 @@ public class Robot extends TimedRobot {
 //			rightInput = Math.pow(rightInput, 3);
 //		}
 		
-		leftInput = sensitivity * Math.pow(leftInput, 3) + (1-sensitivity) * leftInput;
-		rightInput = sensitivity * Math.pow(rightInput, 3) + (1-sensitivity) * rightInput;
+		leftInput = Math.signum(leftInput) * Math.pow(Math.abs(leftInput), sensitivity);
+		rightInput = Math.signum(rightInput) * Math.pow(Math.abs(rightInput), sensitivity);
+		
+//		leftInput = sensitivity * Math.pow(leftInput, 3) + (1-sensitivity) * leftInput;
+//		rightInput = sensitivity * Math.pow(rightInput, 3) + (1-sensitivity) * rightInput;
 
 		
 		SmartDashboard.putNumber("Current Sensitivity", sensitivity);
 		
 		robotDrive.tankDrive(leftInput, rightInput, false);
 		
-		SmartDashboard.putNumber("Left Encoder", leftMotor.getSelectedSensorPosition(0));
-		SmartDashboard.putNumber("Right Encoder", rightMotor.getSelectedSensorPosition(0));
+		SmartDashboard.putNumber("Left Encoder", leftMaster.getSelectedSensorPosition(0));
+		SmartDashboard.putNumber("Right Encoder", rightMaster.getSelectedSensorPosition(0));
 		
 //		// Xbox Rumble
 //		if (xboxController.getY(Hand.kLeft) > 0.9 ) {
@@ -223,7 +288,7 @@ public class Robot extends TimedRobot {
 		// Nudge Buttons
 		
 		// Gear shift penumpatics
-		if (Math.abs(leftMotor.get()) > 0.1 || Math.abs(rightMotor.get()) > 0.1) {
+		if (Math.abs(leftMaster.get()) > 0.1 || Math.abs(rightMaster.get()) > 0.1) {
 			if (leftJoystick.getRawButtonPressed(3) || xboxController.getYButtonPressed()) {
 				if (!gearExtended) {
 					geartSel.set(Value.kForward);
@@ -290,8 +355,8 @@ public class Robot extends TimedRobot {
 			clawSel.set(Value.kOff);
 		}
 		
-		SmartDashboard.putNumber("Left Motor", -leftMotor.get());
-		SmartDashboard.putNumber("Right Motor", rightMotor.get());
+		SmartDashboard.putNumber("Left Motor", -leftMaster.get());
+		SmartDashboard.putNumber("Right Motor", rightMaster.get());
 	}
 
 	/**
@@ -303,17 +368,24 @@ public class Robot extends TimedRobot {
 	}
 	
 	void driveStraight(double speed, double fix) {
-		if (leftMotor.getSelectedSensorPosition(0) > rightMotor.getSelectedSensorPosition(0)) {
-			leftMotor.set(speed - fix);
-			rightMotor.set(-speed);
+		if (leftMaster.getSelectedSensorPosition(0) > rightMaster.getSelectedSensorPosition(0)) {
+			leftMaster.set(speed - fix);
+			rightMaster.set(-speed);
 		}
-		else if (leftMotor.getSelectedSensorPosition(0) < rightMotor.getSelectedSensorPosition(0)) {
-			leftMotor.set(speed);
-			rightMotor.set(-(speed - fix));
+		else if (leftMaster.getSelectedSensorPosition(0) < rightMaster.getSelectedSensorPosition(0)) {
+			leftMaster.set(speed);
+			rightMaster.set(-(speed - fix));
 		}
 		else {
-			leftMotor.set(speed);
-			rightMotor.set(-speed);
+			leftMaster.set(speed);
+			rightMaster.set(-speed);
+		}
+	}
+	
+	void autoDrive(double startDistance, double endDistance, double leftSpeed, double rightSpeed, WPI_TalonSRX encoder ) {
+		if (encoder.getSelectedSensorPosition(0) > startDistance * 420 && encoder.getSelectedSensorPosition(0) < endDistance * 420) {
+			leftMaster.set(leftSpeed);
+			rightMaster.set(-rightSpeed);
 		}
 	}
 }
