@@ -1,11 +1,10 @@
-// Version Bear 0.9g
+// Version Horse 1.0
 
 package org.usfirst.frc.team6519.robot;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -28,9 +27,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * project.
  */
 public class Robot extends TimedRobot {
-	private static final String kMidAuto = "Middle";
-	private static final String kLeftAuto = "Left";
-	private static final String kRightAuto = "Right";
+	
 	
 	private static final String kQuad = "Quadratic";
 	private static final String kLinear = "Linear";
@@ -69,7 +66,7 @@ public class Robot extends TimedRobot {
 	boolean extendExtended = false;
 	boolean clawClosed = false;
 	
-	int autoStage = 0;
+	Autonomous auto;
 //	PowerDistributionPanel pdp;
 	/**
 	 * This function is run when the robot is first started up and should be
@@ -77,9 +74,9 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void robotInit() {
-		autoChooser.addDefault("Middle", kMidAuto);
-		autoChooser.addObject("Left", kLeftAuto);
-		autoChooser.addObject("Right", kRightAuto);
+		autoChooser.addDefault("Middle", Autonomous.kMidAuto);
+		autoChooser.addObject("Left", Autonomous.kLeftAuto);
+		autoChooser.addObject("Right", Autonomous.kRightAuto);
 		SmartDashboard.putData("Autonomouse Mode", autoChooser);
 		
 		SmartDashboard.putNumber("Sensitivity", 1);
@@ -122,6 +119,7 @@ public class Robot extends TimedRobot {
 		rightMaster.setSelectedSensorPosition(0, 0, 0);
 		
 		compressor.start();
+		auto = new Autonomous(this);
 	}
 
 	/**
@@ -139,11 +137,10 @@ public class Robot extends TimedRobot {
 	public void autonomousInit() {
 		autoSelected = autoChooser.getSelected();
 		autoSelected = SmartDashboard.getString("Autonomous Mode",
-		 		kMidAuto);
+		 		Autonomous.kMidAuto);
 		System.out.println("Auto selected: " + autoSelected);
-		leftMaster.setSelectedSensorPosition(0, 0, 0);
-		rightMaster.setSelectedSensorPosition(0, 0, 0);
-		autoStage = 1;
+		auto.selectPosition(autoSelected);
+		resetEncoders();
 	}
 
 	/**
@@ -154,78 +151,9 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putNumber("Left Encoder", leftMaster.getSelectedSensorPosition(0));
 		SmartDashboard.putNumber("Right Encoder", rightMaster.getSelectedSensorPosition(0));
 		
-//		if (leftMaster.getSelectedSensorPosition(0) < 14000 || rightMaster.getSelectedSensorPosition(0) < 14000) {
-//			driveStraight(0.5, 0.05);
-//		}
-//		autoDrive(45, 70, 0.4, 0.6, rightMaster);
-//		autoDrive(77, 110, 0.6, 0.4, leftMaster);
+		auto.run();
 		
-		
-		if (autoStage == 1) {
-			autoStage = 1;
-			if (leftMaster.getSelectedSensorPosition(0) == 0) {
-				extensionSel.set(Value.kForward);
-				try {
-					Thread.sleep(500);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}		
-				clawSel.set(Value.kForward);
-				try {
-					Thread.sleep(500);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			armSel.set(Value.kForward);
-			if (leftMaster.getSelectedSensorPosition(0) < 14000 && rightMaster.getSelectedSensorPosition(0) < 14000) {
-				driveStraight(0.5, 0.05);
-			}
-			else if (leftMaster.getSelectedSensorPosition(0) < 38000 && rightMaster.getSelectedSensorPosition(0) < 38000) {
-				driveStraight(0.5, 0.05);
-			}
-			else if (leftMaster.getSelectedSensorPosition(0) >= 38000 && rightMaster.getSelectedSensorPosition(0) >= 38000) {
-				clawSel.set(Value.kReverse);
-				autoStage = 2;
-			}
-		}
-		if (autoStage == 2) {
-			 if (leftMaster.getSelectedSensorPosition(0) > 10000 || rightMaster.getSelectedSensorPosition(0) > 10000) {
-					driveStraight(-0.5, 0.05);
-			 }
-			 if (leftMaster.getSelectedSensorPosition(0) < 10000) {
-				 autoStage = 3;
-
-			 }
-		}
-		if (autoStage == 3) {
-			autoDrive(20, 80, 0.4, 0.6, leftMaster);
-			autoDrive(80, 150, 0.6, 0.4, rightMaster);
-		}
-		
-		SmartDashboard.putNumber("Auto Stage", autoStage);
-		
-		
-//		switch (autoSelected) {
-//			case kMidAuto:
-////				leftMaster.set(0.3);
-////				rightMaster.set(0.3);
-//				if (leftMaster.getSelectedSensorPosition(0) < 12000) {
-////					leftMaster.set(0.3);
-////					rightMaster.set(-0.3);
-////					driveStraight(0.5, 0.1);
-//				}
-//				break;
-//			case kLeftAuto:
-//				break;
-//			case kRightAuto:
-//				break;
-//			default:
-//				// Put default auto code here
-//				break;
-//		}
+		SmartDashboard.putNumber("Auto Stage", auto.getStage());
 	}
 
 	/**
@@ -387,5 +315,10 @@ public class Robot extends TimedRobot {
 			leftMaster.set(leftSpeed);
 			rightMaster.set(-rightSpeed);
 		}
+	}
+	
+	public void resetEncoders() {
+		leftMaster.setSelectedSensorPosition(0, 0, 0);
+		rightMaster.setSelectedSensorPosition(0, 0, 0);
 	}
 }
